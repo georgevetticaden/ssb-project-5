@@ -1,0 +1,11 @@
+{
+  "id" : "da151fb565c0475b86b4dfb739029cf4",
+  "name" : "csm-kafka-cluster-1-schemaregistry",
+  "type" : "catalog",
+  "properties" : {
+    "catalog_type" : "registry",
+    "registry.address" : "https://csm-kafka-cluster-1-registry0.gvettica.xcu2-8y8x.dev.cldr.work:7790/api/v1",
+    "table_filters" : [ ],
+    "kafka.provider.id" : "217b30738fdf478fbb3ef0ae3ac8b19f"
+  }
+}

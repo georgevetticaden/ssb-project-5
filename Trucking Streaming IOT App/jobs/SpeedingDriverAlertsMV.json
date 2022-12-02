@@ -1,0 +1,88 @@
+{
+  "job_name" : "SpeedingDriverAlertsMV",
+  "api_endpoints" : [ {
+    "endpoint" : "speedingdrivers",
+    "code" : "SELECT \"windowEnd\", \"driverId\", \"driverName\", \"route\", \"driverAvgSpeed\" FROM mv_bacabb4b_speedingdriveralertsmv",
+    "builder_data" : {
+      "rules" : {
+        "condition" : "AND",
+        "rules" : [ ]
+      },
+      "selectedColumns" : [ {
+        "index" : 1,
+        "name" : "windowEnd",
+        "alias" : "windowEnd",
+        "expr" : null,
+        "typeName" : "TIMESTAMP_WITHOUT_TIME_ZONE",
+        "primaryKey" : false,
+        "watermark" : false
+      }, {
+        "index" : 2,
+        "name" : "driverId",
+        "alias" : "driverId",
+        "expr" : null,
+        "typeName" : "BIGINT",
+        "primaryKey" : false,
+        "watermark" : false
+      }, {
+        "index" : 3,
+        "name" : "driverName",
+        "alias" : "driverName",
+        "expr" : null,
+        "typeName" : "VARCHAR",
+        "primaryKey" : false,
+        "watermark" : false
+      }, {
+        "index" : 4,
+        "name" : "route",
+        "alias" : "route",
+        "expr" : null,
+        "typeName" : "VARCHAR",
+        "primaryKey" : false,
+        "watermark" : false
+      }, {
+        "index" : 5,
+        "name" : "driverAvgSpeed",
+        "alias" : "driverAvgSpeed",
+        "expr" : null,
+        "typeName" : "BIGINT",
+        "primaryKey" : false,
+        "watermark" : false
+      } ]
+    }
+  } ],
+  "sql" : "SELECT windowEnd, driverAvgSpeed.driverId, driverAvgSpeed.driverName, driverAvgSpeed.route, driverAvgSpeed.driverAvgSpeed\nFROM\n(\n  SELECT TUMBLE_END(speed_events.eventTimestamp, INTERVAL '3' MINUTE) as windowEnd,\n     speed_events.driverId,speed_events.driverName,speed_events.route,\n     avg(speed_events.speed) as driverAvgSpeed\n  FROM\n  speed_events_json as speed_events\n  GROUP BY\n  TUMBLE(speed_events.eventTimestamp, INTERVAL '3' MINUTE),\n  speed_events.driverId,\n  speed_events.driverName,\n  speed_events.route\n) driverAvgSpeed\nWHERE\ndriverAvgSpeed.driverAvgSpeed > 80",
+  "mv_config" : {
+    "name" : "SpeedingDriverAlertsMV",
+    "retention" : 300,
+    "min_row_retention_count" : 0,
+    "recreate" : true,
+    "key_column_name" : "driverId",
+    "api_key" : "d8f2c98c-0c8e-4467-aba3-92a053ecd57f",
+    "ignore_nulls" : false,
+    "require_restart" : false,
+    "batch_size" : 0,
+    "enabled" : true
+  },
+  "checkpoint_config" : {
+    "enable_checkpointing" : true,
+    "checkpoint_interval_millis" : 600000,
+    "checkpoint_timeout_millis" : 60000,
+    "tolerable_checkpoint_failures" : 2,
+    "checkpoint_mode" : "AT_LEAST_ONCE",
+    "restart_strategy" : "exponential_delay",
+    "exponential_backoff_delay_max_seconds" : 60
+  },
+  "runtime_config" : {
+    "execution_mode" : "SESSION",
+    "parallelism" : 1,
+    "sample_interval" : 1000,
+    "sample_count" : 100,
+    "window_size" : 100,
+    "start_with_savepoint" : false,
+    "log_config" : {
+      "type" : "LOG4J_PROPERTIES",
+      "content" : "\nrootLogger.level = INFO\nrootLogger.appenderRef.file.ref = MainAppender\n#Uncomment this if you want to _only_ change Flink's logging\n#logger.flink.name = org.apache.flink\n#logger.flink.level = INFO\n\n# The following lines keep the log level of common libraries/connectors on\n# log level INFO. The root logger does not override this. You have to manually\n# change the log levels here.\nlogger.akka.name = akka\nlogger.akka.level = INFO\nlogger.kafka.name= org.apache.kafka\nlogger.kafka.level = INFO\nlogger.hadoop.name = org.apache.hadoop\nlogger.hadoop.level = INFO\nlogger.zookeeper.name = org.apache.zookeeper\nlogger.zookeeper.level = INFO\n\n# Log all infos in the given file\nappender.main.name = MainAppender\nappender.main.type = File\nappender.main.append = false\nappender.main.fileName = /var/log/ssb\nappender.main.layout.type = PatternLayout\nappender.main.layout.pattern = %d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %-60c %x - %m%n\n\n# Suppress the irrelevant (wrong) warnings from the Netty channel handler\nlogger.netty.name = org.apache.flink.shaded.akka.org.jboss.netty.channel.DefaultChannelPipeline\nlogger.netty.level = OFF\n"
+    }
+  }
+}

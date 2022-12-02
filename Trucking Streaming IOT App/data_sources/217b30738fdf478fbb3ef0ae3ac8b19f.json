@@ -1,0 +1,11 @@
+{
+  "id" : "217b30738fdf478fbb3ef0ae3ac8b19f",
+  "name" : "csm-kafka-cluster-1-kafka",
+  "type" : "kafka",
+  "properties" : {
+    "brokers" : "csm-kafka-cluster-1-corebroker0.gvettica.xcu2-8y8x.dev.cldr.work:9093,csm-kafka-cluster-1-corebroker1.gvettica.xcu2-8y8x.dev.cldr.work:9093,csm-kafka-cluster-1-corebroker2.gvettica.xcu2-8y8x.dev.cldr.work:9093",
+    "mechanism" : "KERBEROS",
+    "protocol" : "sasl",
+    "ssl.truststore.location" : "/var/lib/cloudera-scm-agent/agent-cert/cm-auto-global_truststore.jks"
+  }
+}
